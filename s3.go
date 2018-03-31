@@ -28,14 +28,43 @@ type S3 struct {
 	MessageType       MessageType `json:"message_type"`
 }
 
-type MessageType string
+type MessageType int
 
 const (
-	MessageTypeClassic = "classic"
-	MessageTypeLoggly  = "loggly"
-	MessageTypeLogplex = "logplex"
-	MessageTypeBlank   = "blank"
+	_                              = iota
+	MessageTypeClassic MessageType = iota
+	MessageTypeLoggly
+	MessageTypeLogplex
+	MessageTypeBlank
 )
+
+func (s *MessageType) UnmarshalText(b []byte) error {
+	switch string(b) {
+	case "classic":
+		*s = MessageTypeClassic
+	case "loggly":
+		*s = MessageTypeLoggly
+	case "logplex":
+		*s = MessageTypeLogplex
+	case "blank":
+		*s = MessageTypeBlank
+	}
+	return nil
+}
+
+func (s *MessageType) MarshalText() ([]byte, error) {
+	switch *s {
+	case MessageTypeClassic:
+		return []byte("classic"), nil
+	case MessageTypeLoggly:
+		return []byte("loggly"), nil
+	case MessageTypeLogplex:
+		return []byte("logplex"), nil
+	case MessageTypeBlank:
+		return []byte("blank"), nil
+	}
+	return nil, nil
+}
 
 // s3sByName is a sortable list of s3s.
 type s3sByName []*S3
